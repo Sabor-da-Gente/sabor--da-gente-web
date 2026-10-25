@@ -1,182 +1,67 @@
 # 🍕 Sabor da Gente — Painel Administrativo Web
 
-Painel administrativo web da pizzaria **Sabor da Gente**, desenvolvido em **Next.js + React** como projeto da disciplina de **Desenvolvimento Web**.
-
-
----
+Painel administrativo da pizzaria **Sabor da Gente**, feito em **Next.js + React + TypeScript** para a disciplina de **Desenvolvimento de Aplicações Web 3 (DAW III)**.
+O cliente faz pedidos pelo app mobile (PDM); a equipe da pizzaria usa este painel. **Os dois conversam pelo mesmo banco, o Supabase.**
 
 ## 🎯 Tema
 
-Enquanto o cliente faz pedidos pelo app mobile, a equipe da pizzaria usa este painel web para:
+- **Entidade principal:** `Produto` (esfihas, bebidas, combos, sobremesas), com CRUD completo.
+- **Entidade secundária:** `Pedido`, vindo do app, com acompanhamento e mudança de status.
 
-- gerenciar o **cardápio** (produtos);
-- acompanhar e atualizar o **status dos pedidos**;
-- visualizar **estatísticas** de vendas.
-
-**Entidade principal:** `Produto` (pizzas, bebidas, combos e sobremesas).
-**Entidade secundária:** `Pedido`, com atualização de status.
-
----
-
-## 👥 Perfis de usuário
-
-| Plataforma | Usuário | Funções |
-|---|---|---|
-| 📱 Mobile | Cliente | Ver cardápio, montar pizza, comprar, acompanhar pedido |
-| 💻 Web | Administrador / Atendente | Gerenciar cardápio, pedidos e relatórios |
-
----
-
-## ✅ Requisitos funcionais
-
-- [ ] **RF01 — CRUD completo** de produtos (adicionar, listar, editar, excluir)
-- [ ] **RF02 — Persistência** na nuvem (Supabase)
-- [ ] **RF03 — Listagem inteligente:** busca por nome, filtro por categoria e status, ordenação por preço/data
-- [ ] **RF04 — Validação** de campos obrigatórios e formatos
-- [ ] **RF05 — Navegação:** listagem, formulário e página de detalhe
-- [ ] **RF06 — Feedback:** confirmação de exclusão, mensagens de sucesso/erro e indicadores de carregamento
-
-### ⭐ Extras (pontuação bônus)
-
-- [ ] Tema claro/escuro
-- [ ] Gráficos e estatísticas (dashboard)
-- [ ] Exportação de dados (CSV)
-
----
-
-## 🗂️ Modelo de dados
-
-### `produtos`
-
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | uuid | Identificador (PK) |
-| nome | text | Nome do produto (obrigatório) |
-| descricao | text | Ingredientes / detalhes |
-| categoria | text | Pizza, Bebida, Combo ou Sobremesa |
-| preco | numeric | Preço em R$ |
-| tamanho | text | Pequena, Média, Grande, Família (quando aplicável) |
-| imagem_url | text | Foto do produto |
-| disponivel | boolean | Ativo / indisponível no cardápio |
-| criado_em | timestamp | Data de cadastro |
-
-### `pedidos`
-
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | uuid | Identificador (PK) |
-| cliente_nome | text | Nome do cliente |
-| itens | jsonb | Itens do pedido |
-| total | numeric | Valor total |
-| forma_pagamento | text | Dinheiro, Pix, Crédito, Débito |
-| status | text | Recebido, Em preparo, Saiu para entrega, Entregue |
-| criado_em | timestamp | Data do pedido |
-
----
+Um produto criado, alterado ou desativado aqui aparece no app. Um pedido feito no app aparece aqui, e o status que a pizzaria muda é visto pelo cliente.
 
 ## 🛠️ Tecnologias
 
-- [Next.js](https://nextjs.org/) (App Router) + React
-- TypeScript
-- Tailwind CSS
-- [Supabase](https://supabase.com/) (PostgreSQL + Auth + Storage)
-- React Hook Form + Zod (validação)
-- Recharts (gráficos)
-- Git e GitHub
+- Next.js 16 (App Router) e React
+- TypeScript e Tailwind CSS
+- Supabase (PostgreSQL na nuvem) com `@supabase/supabase-js`
 
-### Por que Supabase?
+### Por que Supabase
+Os dados precisam ser compartilhados com o app mobile e persistir na nuvem. O Supabase entrega PostgreSQL, API pronta e Realtime sem um servidor próprio, e as regras de preço ficam em funções SQL. O banco está no repositório [`api-sabor-da-gente`](https://github.com/Sabor-da-Gente/api-sabor-da-gente).
 
-- Banco PostgreSQL na nuvem, com os dados mantidos mesmo após fechar o navegador ou reiniciar o servidor.
-- Autenticação e armazenamento de imagens já incluídos.
-- Possibilidade de **compartilhar o mesmo banco com o app mobile**, integrando as duas partes do sistema.
-- Plano gratuito suficiente para o projeto.
+## ✅ Requisitos funcionais
 
----
+- [x] **RF01 — CRUD** de produtos (adicionar, listar, editar, excluir, ativar/desativar)
+- [x] **RF02 — Persistência** na nuvem (Supabase): os dados continuam após fechar o navegador ou reiniciar o servidor
+- [x] **RF03 — Listagem inteligente:** busca, filtros e ordenação
+- [x] **RF04 — Validação** dos campos do formulário
+- [x] **RF05 — Navegação:** listagem, formulário (novo/editar) e detalhe do produto; lista e detalhes de pedidos
+- [x] **RF06 — Feedback:** confirmação de exclusão, mensagens de sucesso/erro e indicadores de carregamento
 
-## 🧱 Estrutura do projeto
+## 🗂️ Modelo de dados (resumo)
 
-```
-sabor-da-gente-web/
-├── src/
-│   ├── app/                # Páginas (rotas)
-│   │   ├── produtos/       # Listagem, formulário e detalhe
-│   │   ├── pedidos/
-│   │   └── dashboard/
-│   ├── components/         # Componentes reutilizáveis
-│   ├── lib/                # Cliente Supabase e utilitários
-│   ├── services/           # Camada de dados (CRUD)
-│   └── types/              # Tipos TypeScript
-├── public/
-└── README.md
-```
+**produtos:** `id`, `categoria_id`, `nome`, `descricao`, `preco` (centavos), `imagem_url`, `destaque`, `ativo`, `criado_em`.
 
----
+**pedidos:** `id` (uuid), `numero`, `cliente_nome`, `cliente_telefone`, `tipo_entrega`, `endereco_entrega`, `forma_pagamento`, `troco_para`, `subtotal`, `desconto`, `taxa_entrega`, `total`, `status`, `criado_em`.
 
-## 🚀 Como executar
+**itens_pedido:** `id`, `pedido_id`, `nome`, `sabores`, `quantidade`, `preco_unitario`.
 
-### Pré-requisitos
+Status do pedido: `recebido`, `em_preparo`, `saiu_para_entrega`, `pronto_para_retirada`, `entregue`, `cancelado`.
+Modelo completo: [`api-sabor-da-gente`](https://github.com/Sabor-da-Gente/api-sabor-da-gente).
 
-- Node.js 18+
-- Conta no Supabase
+## ▶️ Como executar
 
-### Passos
+    git clone https://github.com/Sabor-da-Gente/sabor--da-gente-web.git
+    cd sabor--da-gente-web
+    npm install
+    npm run dev
 
-```bash
-# 1. Clonar o repositório
-git clone https://github.com/4rthurhr/sabor--da-gente-web.git
-cd sabor--da-gente-web
+Abra http://localhost:3000. O arquivo `.env` já vem no repositório com a URL do projeto e a *publishable key* do Supabase (chave pública; nunca use a *secret key* ou *service_role* aqui).
 
-# 2. Instalar dependências
-npm install
-
-# 3. Configurar variáveis de ambiente
-cp .env.example .env.local
-# Preencha NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-# 4. Rodar o projeto
-npm run dev
-```
-
-Acesse: http://localhost:3000
-
----
+Páginas: `/` (início), `/produtos`, `/produtos/novo`, `/produtos/[id]`, `/produtos/editar/[id]` e `/pedidos`.
 
 ## 📸 Telas
 
-> Adicione aqui os prints do sistema.
+![Pedidos](docs/prints/01-pedidos.png)
+![Detalhes do pedido](docs/prints/02-detalhes-pedido.png)
+![Produtos](docs/prints/03-produtos.png)
+![Formulário de produto](docs/prints/04-formulario-produto.png)
 
-| Dashboard | Listagem de produtos |
-|---|---|
-| ![Dashboard](docs/dashboard.png) | ![Produtos](docs/produtos.png) |
+## 🗃️ Organização
 
-| Formulário | Pedidos |
-|---|---|
-| ![Formulário](docs/formulario.png) | ![Pedidos](docs/pedidos.png) |
+    app/        páginas (início, produtos, pedidos)
+    lib/        cliente do Supabase (camada de dados)
 
----
+## 📌 Observação
 
-## 🎨 Identidade visual
-
-| Cor | Hex |
-|---|---|
-| Vermelho (primária) | `#E63946` |
-| Amarelo (secundária) | `#FFB703` |
-| Cinza escuro | `#2E2E2E` |
-| Bege | `#F7F4EE` |
-| Cinza claro | `#E0E0E0` |
-
----
-
-## 👨‍💻 Equipe
-
-| Nome | GitHub | Responsabilidade |
-|---|---|---|
-| Arthur | [@4rthurhr](https://github.com/4rthurhr) | A definir |
-| Integrante 2 | [@Denilsonrsl](https://github.com/Denilsonrsl) | A definir |
-| Integrante 3 | [@PedroSlv7](https://github.com/PedroSlv7) | A definir |
-
----
-
-## 📄 Licença
-
-Projeto acadêmico — MIT License.
+Projeto acadêmico: o painel não tem login e usa a chave pública, por isso o acesso às tabelas de produtos e pedidos é aberto. Não é uma configuração para produção.

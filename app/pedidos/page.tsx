@@ -32,6 +32,7 @@ const STATUS: { valor: string; rotulo: string }[] = [
   { valor: "recebido", rotulo: "Recebido" },
   { valor: "em_preparo", rotulo: "Em preparo" },
   { valor: "saiu_para_entrega", rotulo: "Saiu para entrega" },
+  { valor: "pronto_para_retirada", rotulo: "Pronto para retirada" },
   { valor: "entregue", rotulo: "Entregue" },
   { valor: "cancelado", rotulo: "Cancelado" },
 ];
@@ -71,6 +72,8 @@ function corStatus(status: string) {
       return "bg-amber-950 text-amber-300";
     case "saiu_para_entrega":
       return "bg-violet-950 text-violet-300";
+    case "pronto_para_retirada":
+      return "bg-fuchsia-950 text-fuchsia-300";
     case "entregue":
       return "bg-emerald-950 text-emerald-300";
     case "cancelado":

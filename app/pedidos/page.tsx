@@ -32,6 +32,7 @@ const STATUS: { valor: string; rotulo: string }[] = [
   { valor: "recebido", rotulo: "Recebido" },
   { valor: "em_preparo", rotulo: "Em preparo" },
   { valor: "saiu_para_entrega", rotulo: "Saiu para entrega" },
+  { valor: "pronto_para_retirada", rotulo: "Pronto para retirada" },
   { valor: "entregue", rotulo: "Entregue" },
   { valor: "cancelado", rotulo: "Cancelado" },
 ];

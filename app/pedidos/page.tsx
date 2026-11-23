@@ -117,9 +117,11 @@ export default function PedidosPage() {
   const [motivoCancelamento, setMotivoCancelamento] = useState("");
 
   // 1. CARREGAR PEDIDOS DECLARADO PRIMEIRO PARA EVITAR ERRO DE ESCOPO
-  const carregarPedidos = useCallback(async () => {
-    setCarregando(true);
-    setErro("");
+  const carregarPedidos = useCallback(async (silencioso = false) => {
+    if (!silencioso) {
+      setCarregando(true);
+      setErro("");
+    }
 
     try {
       let query = supabase
@@ -151,6 +153,25 @@ export default function PedidosPage() {
 
   useEffect(() => {
     void carregarPedidos();
+  }, [carregarPedidos]);
+
+  // Tempo real: recarrega a lista (mesmo filtro de período) quando um pedido
+  // é criado ou alterado, sem spinner e sem limpar mensagens da tela.
+  useEffect(() => {
+    const canal = supabase
+      .channel(`realtime-pedidos-${Date.now()}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "pedidos" },
+        () => {
+          void carregarPedidos(true);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(canal);
+    };
   }, [carregarPedidos]);
 
   const pedidosFiltrados = useMemo(() => {

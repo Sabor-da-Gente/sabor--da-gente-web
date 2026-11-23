@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import Notificacoes from "@/components/Notificacoes";
 import BotaoTema from "@/components/BotaoTema";
 
 export default function ProtegerRota({ children }: { children: ReactNode }) {
@@ -52,6 +53,7 @@ export default function ProtegerRota({ children }: { children: ReactNode }) {
   return (
     <>
       <BotaoTema />
+      {liberado && <Notificacoes />}
       {liberado ? (
         children
       ) : (

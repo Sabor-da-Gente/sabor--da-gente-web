@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import BotaoTema from "@/components/BotaoTema";
 
 export default function ProtegerRota({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -48,13 +49,16 @@ export default function ProtegerRota({ children }: { children: ReactNode }) {
     };
   }, [router]);
 
-  if (!liberado) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-400">
-        <p role="status">Verificando acesso...</p>
-      </main>
-    );
-  }
-
-  return <>{children}</>;
+  return (
+    <>
+      <BotaoTema />
+      {liberado ? (
+        children
+      ) : (
+        <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-400">
+          <p role="status">Verificando acesso...</p>
+        </main>
+      )}
+    </>
+  );
 }

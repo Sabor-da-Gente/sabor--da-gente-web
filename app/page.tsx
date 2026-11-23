@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import ProtegerRota from "@/components/ProtegerRota";
 
-export default function Home() {
+function HomeConteudo() {
   const router = useRouter();
   const [usuarioEmail, setUsuarioEmail] = useState<string | null>(null);
 
@@ -126,5 +127,13 @@ export default function Home() {
         </footer>
       </div>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <ProtegerRota>
+      <HomeConteudo />
+    </ProtegerRota>
   );
 }

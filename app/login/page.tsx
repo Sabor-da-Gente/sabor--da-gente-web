@@ -1,20 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function LoginPage() {
+function traduzirErro(mensagem: string) {
+  const m = mensagem.toLowerCase();
+  if (m.includes("invalid login credentials")) {
+    return "E-mail ou senha incorretos.";
+  }
+  if (m.includes("email not confirmed")) {
+    return "E-mail ainda não confirmado.";
+  }
+  return "Não foi possível entrar. Tente novamente.";
+}
+
+const ERROS_DA_URL: Record<string, string> = {
+  "sem-permissao":
+    "Esta conta não tem permissão para acessar o painel administrativo.",
+  verificacao: "Não foi possível verificar seu acesso. Entre novamente.",
+};
+
+function LoginForm() {
   const router = useRouter();
+  const motivo = useSearchParams().get("erro");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
+  const [erroLocal, setErroLocal] = useState("");
   const [carregando, setCarregando] = useState(false);
+
+  const erro = erroLocal || (motivo ? (ERROS_DA_URL[motivo] ?? "") : "");
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setCarregando(true);
-    setErro("");
+    setErroLocal("");
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -22,12 +42,25 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setErro("Falha ao entrar: " + error.message);
+      setErroLocal(traduzirErro(error.message));
       setCarregando(false);
-    } else {
-      router.push("/");
-      router.refresh();
+      return;
     }
+
+    const { data: ehAdmin, error: erroPapel } = await supabase.rpc("eh_admin");
+    if (erroPapel || ehAdmin !== true) {
+      await supabase.auth.signOut();
+      setErroLocal(
+        erroPapel
+          ? "Não foi possível verificar seu acesso. Tente novamente."
+          : "Esta conta não tem permissão para acessar o painel administrativo."
+      );
+      setCarregando(false);
+      return;
+    }
+
+    router.push("/");
+    router.refresh();
   }
 
   return (
@@ -103,5 +136,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

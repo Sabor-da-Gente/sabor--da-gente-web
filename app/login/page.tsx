@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import BotaoTema from "@/components/BotaoTema";
 
 function traduzirErro(mensagem: string) {
   const m = mensagem.toLowerCase();
@@ -141,8 +142,11 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={null}>
-      <LoginForm />
-    </Suspense>
+    <>
+      <BotaoTema />
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
+    </>
   );
 }

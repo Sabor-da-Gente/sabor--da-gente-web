@@ -254,12 +254,14 @@ export default function PedidosPage() {
       });
     }
 
-    // Cancelamento liberado enquanto não entregue
-    acoes.push({
-      status: "cancelado",
-      label: "Cancelar",
-      variante: "cancelar",
-    });
+    // Cancelamento permitido apenas enquanto o pedido está "Recebido"
+    if (pedido.status === "recebido") {
+      acoes.push({
+        status: "cancelado",
+        label: "Cancelar",
+        variante: "cancelar",
+      });
+    }
 
     return acoes;
   }

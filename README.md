@@ -46,16 +46,22 @@ Modelo completo: [`api-sabor-da-gente`](https://github.com/Sabor-da-Gente/api-sa
     npm install
     npm run dev
 
+    Login para teste "admin@sabordagente.com"
+    senha: 123456
+
 Abra http://localhost:3000. O arquivo `.env` já vem no repositório com a URL do projeto e a *publishable key* do Supabase (chave pública; nunca use a *secret key* ou *service_role* aqui).
 
 Páginas: `/` (início), `/produtos`, `/produtos/novo`, `/produtos/[id]`, `/produtos/editar/[id]` e `/pedidos`.
 
 ## 📸 Telas
 
-![Pedidos](docs/prints/01-pedidos.png)
+![Pedidos](docs/prints/Login.PNG)
+![Pedidos](docs/prints/tela1.PNG)
+![Pedidos](docs/prints/tela2.PNG)
 ![Detalhes do pedido](docs/prints/02-detalhes-pedido.png)
 ![Produtos](docs/prints/03-produtos.png)
 ![Formulário de produto](docs/prints/04-formulario-produto.png)
+![Pedidos](docs/prints/tela3.PNG)
 
 ## 🗃️ Organização
 
